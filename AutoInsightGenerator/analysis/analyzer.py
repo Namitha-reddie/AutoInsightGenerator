@@ -5,8 +5,117 @@ import numpy as np
 # ---------------------------------------------------
 # BASIC STATISTICS
 # ---------------------------------------------------
+def clean_numeric_column(df, column_name):
+
+    df[column_name] = (
+
+        df[column_name]
+
+        .astype(str)
+
+        .str.replace(",", "", regex=False)
+
+        .str.replace("$", "", regex=False)
+
+        .str.replace("₹", "", regex=False)
+
+    )
+
+
+    df[column_name] = pd.to_numeric(
+
+        df[column_name],
+        errors="coerce"
+
+    )
+
+
+    return df
 
 def basic_statistics(df, columns):
+
+    revenue_col = columns["revenue"]
+
+
+    # ---------------------------------------------------
+    # CLEAN REVENUE COLUMN
+    # ---------------------------------------------------
+
+    df[revenue_col] = (
+
+        df[revenue_col]
+
+        .astype(str)
+
+        .str.replace(",", "", regex=False)
+
+        .str.replace("$", "", regex=False)
+
+        .str.replace("₹", "", regex=False)
+
+    )
+
+
+    df[revenue_col] = pd.to_numeric(
+
+        df[revenue_col],
+        errors="coerce"
+
+    )
+
+
+    # ---------------------------------------------------
+    # CLEAN PROFIT COLUMN
+    # ---------------------------------------------------
+
+    if "profit" in columns:
+
+        profit_col = columns["profit"]
+
+
+        df[profit_col] = (
+
+            df[profit_col]
+
+            .astype(str)
+
+            .str.replace(",", "", regex=False)
+
+            .str.replace("$", "", regex=False)
+
+            .str.replace("₹", "", regex=False)
+
+        )
+
+
+        df[profit_col] = pd.to_numeric(
+
+            df[profit_col],
+            errors="coerce"
+
+        )
+
+
+    # ---------------------------------------------------
+    # CLEAN UNITS COLUMN
+    # ---------------------------------------------------
+
+    if "units" in columns:
+
+        units_col = columns["units"]
+
+
+        df[units_col] = pd.to_numeric(
+
+            df[units_col],
+            errors="coerce"
+
+        )
+
+
+    # ---------------------------------------------------
+    # GENERATE STATISTICS
+    # ---------------------------------------------------
 
     stats = {
 
@@ -15,16 +124,16 @@ def basic_statistics(df, columns):
         "Total Columns": df.shape[1],
 
         "Total Revenue":
-            df[columns["revenue"]].sum(),
+            df[revenue_col].sum(),
 
         "Average Revenue":
-            df[columns["revenue"]].mean(),
+            df[revenue_col].mean(),
 
         "Maximum Revenue":
-            df[columns["revenue"]].max(),
+            df[revenue_col].max(),
 
         "Minimum Revenue":
-            df[columns["revenue"]].min(),
+            df[revenue_col].min(),
 
         "Total Profit":
             df[columns["profit"]].sum()
@@ -40,9 +149,8 @@ def basic_statistics(df, columns):
 
     }
 
+
     return stats
-
-
 # ---------------------------------------------------
 # TOP ITEM TYPE
 # ---------------------------------------------------
@@ -53,24 +161,40 @@ def top_item_type(df, columns):
 
         return "Not Available"
 
+
+    df = clean_numeric_column(
+
+        df,
+        columns["revenue"]
+
+    )
+
+
     item_sales = df.groupby(
 
         columns["item_type"]
 
     )[columns["revenue"]].sum()
 
+
     return item_sales.idxmax()
-
-
 # ---------------------------------------------------
 # TOP REGION
 # ---------------------------------------------------
-
 def top_region(df, columns):
 
     if "region" not in columns:
 
         return "Not Available"
+
+
+    df = clean_numeric_column(
+
+        df,
+        columns["revenue"]
+
+    )
+
 
     region_sales = df.groupby(
 
@@ -78,9 +202,8 @@ def top_region(df, columns):
 
     )[columns["revenue"]].sum()
 
+
     return region_sales.idxmax()
-
-
 # ---------------------------------------------------
 # BEST SALES CHANNEL
 # ---------------------------------------------------
@@ -91,14 +214,23 @@ def best_sales_channel(df, columns):
 
         return "Not Available"
 
+
+    df = clean_numeric_column(
+
+        df,
+        columns["revenue"]
+
+    )
+
+
     channel_sales = df.groupby(
 
         columns["channel"]
 
     )[columns["revenue"]].sum()
 
-    return channel_sales.idxmax()
 
+    return channel_sales.idxmax()
 
 # ---------------------------------------------------
 # MOST PROFITABLE COUNTRY
@@ -110,14 +242,23 @@ def top_country(df, columns):
 
         return "Not Available"
 
+
+    df = clean_numeric_column(
+
+        df,
+        columns["profit"]
+
+    )
+
+
     country_profit = df.groupby(
 
         columns["country"]
 
     )[columns["profit"]].sum()
 
-    return country_profit.idxmax()
 
+    return country_profit.idxmax()
 
 # ---------------------------------------------------
 # CORRELATION ANALYSIS
@@ -129,6 +270,23 @@ def correlation_analysis(df, columns):
 
         return 0
 
+
+    df = clean_numeric_column(
+
+        df,
+        columns["revenue"]
+
+    )
+
+
+    df = clean_numeric_column(
+
+        df,
+        columns["profit"]
+
+    )
+
+
     correlation = df[
 
         columns["revenue"]
@@ -139,9 +297,8 @@ def correlation_analysis(df, columns):
 
     )
 
+
     return correlation
-
-
 # ---------------------------------------------------
 # TREND ANALYSIS
 # ---------------------------------------------------
@@ -151,6 +308,14 @@ def monthly_sales_trend(df, columns):
     if "date" not in columns:
 
         return None, 0
+
+
+    df = clean_numeric_column(
+
+        df,
+        columns["revenue"]
+
+    )
 
 
     df[columns["date"]] = pd.to_datetime(
@@ -178,7 +343,6 @@ def monthly_sales_trend(df, columns):
 
     return monthly_sales, trend
 
-
 # ---------------------------------------------------
 # OUTLIER DETECTION
 # ---------------------------------------------------
@@ -186,6 +350,14 @@ def monthly_sales_trend(df, columns):
 def detect_outliers(df, columns):
 
     revenue_col = columns["revenue"]
+
+
+    df = clean_numeric_column(
+
+        df,
+        revenue_col
+
+    )
 
 
     Q1 = df[revenue_col].quantile(0.25)
