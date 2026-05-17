@@ -1,3 +1,4 @@
+
 # ---------------------------------------------------
 # DYNAMIC COLUMN MAPPING
 # ---------------------------------------------------
@@ -8,55 +9,148 @@ def map_columns(df):
 
     for col in df.columns:
 
-        col_lower = col.lower()
+        
+        col_lower = col.lower().strip().replace("_", " ")
 
 
-        # Revenue Mapping
-        if "revenue" in col_lower or "sales" in col_lower:
+        # ---------------------------------------------------
+        # REVENUE / SALES / AMOUNT
+        # ---------------------------------------------------
 
-            columns["revenue"] = col
+        if any(keyword in col_lower.replace(" ", "") for keyword in [
+ 
+       "revenue",
+       "sales",
+       "amount",
+       "totalamount",
+        "totalsales"
+
+]):
+
+         columns["revenue"] = col
+
+            
 
 
-        # Profit Mapping
-        elif "profit" in col_lower:
+        # ---------------------------------------------------
+        # PROFIT
+        # ---------------------------------------------------
+
+        if any(keyword in col_lower for keyword in [
+
+            "profit",
+            "margin",
+            "earnings",
+            "income"
+
+        ]):
 
             columns["profit"] = col
 
 
-        # Units Sold Mapping
-        elif "unit" in col_lower or "quantity" in col_lower:
+        # ---------------------------------------------------
+        # UNITS / QUANTITY
+        # ---------------------------------------------------
+
+        if any(keyword in col_lower for keyword in [
+
+            "unit",
+            "quantity",
+            "qty"
+
+        ]):
 
             columns["units"] = col
 
 
-        # Region Mapping
-        elif "region" in col_lower:
+        # ---------------------------------------------------
+        # REGION
+        # ---------------------------------------------------
+
+        if "region" in col_lower:
 
             columns["region"] = col
 
 
-        # Category / Item Type
-        elif "item" in col_lower or "category" in col_lower:
+        # ---------------------------------------------------
+        # ITEM TYPE / CATEGORY / PRODUCT
+        # ---------------------------------------------------
+
+        if any(keyword in col_lower for keyword in [
+
+            "item",
+            "category",
+            "product"
+
+        ]):
 
             columns["item_type"] = col
 
 
-        # Sales Channel
-        elif "channel" in col_lower:
+        # ---------------------------------------------------
+        # SALES CHANNEL
+        # ---------------------------------------------------
+
+        if "channel" in col_lower:
 
             columns["channel"] = col
 
 
-        # Country
-        elif "country" in col_lower:
+        # ---------------------------------------------------
+        # COUNTRY
+        # ---------------------------------------------------
+
+        if "country" in col_lower:
 
             columns["country"] = col
 
 
-        # Date
-        elif "date" in col_lower:
+        # ---------------------------------------------------
+        # DATE
+        # ---------------------------------------------------
+
+        if "date" in col_lower:
 
             columns["date"] = col
 
 
-    return columns
+    return columns 
+
+'''def map_columns(df):
+    columns = {}
+    for col in df.columns:
+        col_lower = col.lower()
+
+        # Revenue Mapping
+        if "revenue" in col_lower or "sales" in col_lower:
+            columns["revenue"] = col
+
+        # Profit Mapping
+        elif "profit" in col_lower:
+            columns["profit"] = col
+
+        # Units Sold Mapping
+        elif "unit" in col_lower or "quantity" in col_lower:
+            columns["units"] = col
+
+        # Region Mapping
+        elif "region" in col_lower:
+            columns["region"] = col
+
+        # Category / Item Type
+        elif "item" in col_lower or "category" in col_lower:
+            columns["item_type"] = col
+
+        # Sales Channel
+        elif "channel" in col_lower:
+            columns["channel"] = col
+
+        # Country
+        elif "country" in col_lower:
+            columns["country"] = col
+
+        # Date
+        elif "date" in col_lower:
+            columns["date"] = col
+
+    return columns'''
