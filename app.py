@@ -97,6 +97,10 @@ if uploaded_file is not None:
         # ---------------------------------------------------
 
         columns = map_columns(df)
+        # Reduce large dataset size
+
+        if len(df) > 10000:
+            df = df.sample(10000)
 
 
         # Validation

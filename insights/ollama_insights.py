@@ -75,3 +75,4 @@ def generate_ai_insights(
 
 
     return response['message']['content']
+    
